@@ -18,37 +18,31 @@ import ru.itrum.springSecurity.task01.services.PersonDetailsService;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final PersonDetailsService personDetailsService;
     private final JwtAuthenticationFilter jwtFilter;
+    private final JwtAuthenticationProvider jwtAuthenticationProvider;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        // конфигурируем сам Spring Security
-        // конфигурируем авторизацию
         http.csrf().disable()
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .authenticationProvider(jwtAuthenticationProvider)
                 .authorizeRequests()
-                .antMatchers("/admin").hasRole("ADMIN")
-                .antMatchers("/auth/login", "/auth/registration", "/error").permitAll()
-                .anyRequest().hasAnyRole("USER","ADMIN")
+                .antMatchers("/public/**").permitAll()
+                .anyRequest().authenticated()
                 .and()
-                .formLogin().loginPage("/auth/login")
-                .loginProcessingUrl("/process_login")
-                .defaultSuccessUrl("/hello", true)
-                .failureUrl("/auth/login?error")
+                .formLogin()
+                .loginPage("/login")
+                .permitAll()
                 .and()
                 .logout()
                 .logoutUrl("/logout")
-                .logoutSuccessUrl("/auth/login")
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
-        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
-    // Настраиваем аутентификацию
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(personDetailsService)
-                .passwordEncoder(getPasswordEncoder());
+        auth.userDetailsService(personDetailsService).passwordEncoder(getPasswordEncoder());
     }
 
     @Bean

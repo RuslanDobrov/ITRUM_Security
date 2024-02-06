@@ -15,8 +15,6 @@ public class PersonDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // SHOW_ACCOUNT, WITHOUT_MONEY, SEND_MONEY
-        // ROLE_ADMIN, ROLE_USER
         return Collections.singletonList(new SimpleGrantedAuthority(person.getRole()));
     }
 

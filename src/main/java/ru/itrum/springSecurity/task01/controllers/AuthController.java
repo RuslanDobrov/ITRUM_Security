@@ -2,10 +2,14 @@ package ru.itrum.springSecurity.task01.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import ru.itrum.springSecurity.task01.dto.AuthenticationDTO;
 import ru.itrum.springSecurity.task01.dto.PersonDTO;
 import ru.itrum.springSecurity.task01.models.Person;
 import ru.itrum.springSecurity.task01.security.JWTUtil;
@@ -24,6 +28,7 @@ public class AuthController {
     private final RegistrationService registrationService;
     private final JWTUtil jwtUtil;
     private final ModelMapper modelMapper;
+    private final AuthenticationManager authenticationManager;
 
     @PostMapping("/registration")
     public Map<String, String> performRegistration(@RequestBody @Valid PersonDTO personDTO, BindingResult bindingResult) {
@@ -52,5 +57,20 @@ public class AuthController {
 
     public Person convertToPerson(PersonDTO personDTO) {
         return this.modelMapper.map(personDTO, Person.class);
+    }
+
+    @PostMapping("/login")
+    public Map<String, String> performLogin(@RequestBody AuthenticationDTO authenticationDTO) {
+        UsernamePasswordAuthenticationToken authInputToken =
+                new UsernamePasswordAuthenticationToken(authenticationDTO.getUsername(),
+                        authenticationDTO.getPassword());
+        try {
+            authenticationManager.authenticate(authInputToken);
+        } catch (BadCredentialsException e) {
+            return Map.of("message", "Incorrect credentials!");
+        }
+
+        String token = jwtUtil.generateToken(authenticationDTO.getUsername());
+        return Map.of("jwt-token", token);
     }
 }

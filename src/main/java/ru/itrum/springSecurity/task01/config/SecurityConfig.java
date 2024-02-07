@@ -26,18 +26,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .authenticationProvider(jwtAuthenticationProvider)
                 .authorizeRequests()
+                .antMatchers("/admin/**").hasRole("SUPER_ADMIN")
+                .antMatchers("/moderator/**").hasAnyRole("SUPER_ADMIN", "MODERATOR")
                 .antMatchers("/public/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .formLogin()
-                .loginPage("/login")
-                .permitAll()
+                .formLogin().loginPage("/login").permitAll()
                 .and()
-                .logout()
-                .logoutUrl("/logout")
+                .logout().logoutUrl("/logout")
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+
     }
 
     @Override

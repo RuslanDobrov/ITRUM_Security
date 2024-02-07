@@ -25,7 +25,7 @@ public class PersonValidator implements Validator {
         try {
             personDetailsService.loadUserByUsername(person.getUsername());
         } catch (UsernameNotFoundException ignored) {
-            return; //person is funded
+            return; //person found
         }
         errors.rejectValue("username", "", "Person is already exists");
     }

@@ -1,6 +1,8 @@
 package ru.itrum.springSecurity.task01.util;
 
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -13,6 +15,7 @@ import ru.itrum.springSecurity.task01.services.PersonDetailsService;
 public class PersonValidator implements Validator {
 
     private final PersonDetailsService personDetailsService;
+    private static final Logger logger = LoggerFactory.getLogger(PersonValidator.class);
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -28,5 +31,6 @@ public class PersonValidator implements Validator {
             return; //person found
         }
         errors.rejectValue("username", "", "Person is already exists");
+        logger.error("User with login: " + person.getUsername() + ", is already exists");
     }
 }

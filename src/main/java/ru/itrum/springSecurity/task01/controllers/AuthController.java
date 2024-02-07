@@ -2,6 +2,8 @@ package ru.itrum.springSecurity.task01.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,6 +31,7 @@ public class AuthController {
     private final JWTUtil jwtUtil;
     private final ModelMapper modelMapper;
     private final AuthenticationManager authenticationManager;
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @PostMapping("/registration")
     public Map<String, String> performRegistration(@RequestBody @Valid PersonDTO personDTO, BindingResult bindingResult) {
@@ -43,6 +46,9 @@ public class AuthController {
         registrationService.register(person);
 
         String token = jwtUtil.generateToken(person.getUsername());
+
+        logger.info("User with login: " + person.getUsername() + ", has been registered with token: " + token);
+
         return Map.of("jwt-token", token);
     }
 
@@ -51,6 +57,8 @@ public class AuthController {
     public String showUserInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         PersonDetails personDetails = (PersonDetails) authentication.getPrincipal();
+
+        logger.info("User with login: " + personDetails.getUsername() + ", called the endpoint: showUserInfo");
 
         return personDetails.getUsername();
     }

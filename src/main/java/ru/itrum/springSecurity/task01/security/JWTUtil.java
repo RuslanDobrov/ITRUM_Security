@@ -6,8 +6,11 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
 import java.time.ZonedDateTime;
 import java.util.Date;
 
@@ -19,6 +22,8 @@ public class JWTUtil {
 
     @Value("${jwt_expiration_time}")
     private int expirationSeconds;
+
+    private static final Logger logger = LoggerFactory.getLogger(JWTUtil.class);
 
     public String generateToken(String username) {
         Date expirationDate = Date.from(ZonedDateTime.now().plusSeconds(expirationSeconds).toInstant());
@@ -41,8 +46,10 @@ public class JWTUtil {
             DecodedJWT jwt = verifier.verify(token);
             return jwt.getClaim("username").asString();
         } catch (TokenExpiredException e) {
+            logger.error("Token has expired", e);
             throw new TokenExpiredException("Token has expired");
         } catch (JWTVerificationException e) {
+            logger.error("Token is invalid", e);
             throw new JWTVerificationException("Token is invalid");
         }
     }

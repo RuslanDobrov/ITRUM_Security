@@ -3,12 +3,15 @@ package ru.itrum.springSecurity.task01.config;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import ru.itrum.springSecurity.task01.controllers.AuthController;
 import ru.itrum.springSecurity.task01.security.JWTUtil;
 import ru.itrum.springSecurity.task01.services.PersonDetailsService;
 import javax.servlet.FilterChain;
@@ -23,6 +26,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
     private final PersonDetailsService personDetailsService;
+    private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -52,10 +56,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             personDetailsService.loadUserByUsername(username);
             return true;
         } catch (TokenExpiredException e) {
-            System.out.println("Token has expired");
+            logger.error("Token has expired", e);
             return false;
         } catch (JWTVerificationException e) {
-            System.out.println("Invalid token");
+            logger.error("Invalid token", e);
             return false;
         }
     }

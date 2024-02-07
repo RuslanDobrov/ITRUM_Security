@@ -36,19 +36,13 @@ public class AuthController {
     @PostMapping("/registration")
     public Map<String, String> performRegistration(@RequestBody @Valid PersonDTO personDTO, BindingResult bindingResult) {
         Person person = convertToPerson(personDTO);
-
         personValidator.validate(person, bindingResult);
-
         if (bindingResult.hasErrors()) {
             return Map.of("message", "Error!");
         }
-
         registrationService.register(person);
-
         String token = jwtUtil.generateToken(person.getUsername());
-
         logger.info("User with login: " + person.getUsername() + ", has been registered with token: " + token);
-
         return Map.of("jwt-token", token);
     }
 
@@ -57,9 +51,7 @@ public class AuthController {
     public String showUserInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         PersonDetails personDetails = (PersonDetails) authentication.getPrincipal();
-
         logger.info("User with login: " + personDetails.getUsername() + ", called the endpoint: showUserInfo");
-
         return personDetails.getUsername();
     }
 
@@ -75,9 +67,11 @@ public class AuthController {
         try {
             authenticationManager.authenticate(authInputToken);
         } catch (BadCredentialsException e) {
+            registrationService.updateFailedLoginAttempts(authenticationDTO.getUsername());
             return Map.of("message", "Incorrect credentials!");
         }
 
+        registrationService.resetFailedLoginAttempts(authenticationDTO.getUsername());
         String token = jwtUtil.generateToken(authenticationDTO.getUsername());
         return Map.of("jwt-token", token);
     }

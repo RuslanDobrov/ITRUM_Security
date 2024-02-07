@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 @Getter
+@Setter
 @RequiredArgsConstructor
 public class PersonDetails implements UserDetails {
     private final Person person;

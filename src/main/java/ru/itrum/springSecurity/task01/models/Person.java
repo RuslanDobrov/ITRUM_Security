@@ -28,4 +28,10 @@ public class Person {
 
     @Column(name = "role")
     private String role;
+
+    @Column(name = "failed_login_attempts")
+    private int failedLoginAttempts;
+
+    @Column(name = "account_locked")
+    private boolean accountLocked;
 }

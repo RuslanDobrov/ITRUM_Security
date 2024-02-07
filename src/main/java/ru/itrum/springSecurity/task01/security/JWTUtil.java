@@ -6,14 +6,16 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import java.time.ZonedDateTime;
 import java.util.Date;
 
+
+@RequiredArgsConstructor
 @Component
 public class JWTUtil {
 
@@ -42,7 +44,6 @@ public class JWTUtil {
                     .withSubject("User details")
                     .withIssuer("dobrov")
                     .build();
-
             DecodedJWT jwt = verifier.verify(token);
             return jwt.getClaim("username").asString();
         } catch (TokenExpiredException e) {

@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import ru.itrum.springSecurity.task01.controllers.AuthController;
 import ru.itrum.springSecurity.task01.security.JWTUtil;
 import ru.itrum.springSecurity.task01.services.PersonDetailsService;
 

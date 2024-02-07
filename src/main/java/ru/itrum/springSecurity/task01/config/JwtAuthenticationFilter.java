@@ -11,7 +11,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import ru.itrum.springSecurity.task01.controllers.AuthController;
 import ru.itrum.springSecurity.task01.security.JWTUtil;
 import ru.itrum.springSecurity.task01.services.PersonDetailsService;
 import javax.servlet.FilterChain;

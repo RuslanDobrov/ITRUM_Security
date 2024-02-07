@@ -1,6 +1,7 @@
 package ru.itrum.springSecurity.task01.config;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -50,7 +51,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String username = jwtUtil.validateToken(token);
             personDetailsService.loadUserByUsername(username);
             return true;
+        } catch (TokenExpiredException e) {
+            System.out.println("Token has expired");
+            return false;
         } catch (JWTVerificationException e) {
+            System.out.println("Invalid token");
             return false;
         }
     }

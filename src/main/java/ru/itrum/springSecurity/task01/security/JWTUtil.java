@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -31,12 +32,18 @@ public class JWTUtil {
     }
 
     public String validateToken(String token) throws JWTVerificationException {
-        JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secret))
-                .withSubject("User details")
-                .withIssuer("dobrov")
-                .build();
+        try {
+            JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secret))
+                    .withSubject("User details")
+                    .withIssuer("dobrov")
+                    .build();
 
-        DecodedJWT jwt = verifier.verify(token);
-        return jwt.getClaim("username").asString();
+            DecodedJWT jwt = verifier.verify(token);
+            return jwt.getClaim("username").asString();
+        } catch (TokenExpiredException e) {
+            throw new TokenExpiredException("Token has expired");
+        } catch (JWTVerificationException e) {
+            throw new JWTVerificationException("Token is invalid");
+        }
     }
 }

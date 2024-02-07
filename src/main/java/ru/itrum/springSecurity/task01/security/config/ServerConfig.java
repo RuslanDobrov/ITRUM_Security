@@ -1,4 +1,4 @@
-package ru.itrum.springSecurity.task01.config;
+package ru.itrum.springSecurity.task01.security.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;

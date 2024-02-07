@@ -8,11 +8,11 @@ import ru.itrum.springSecurity.task01.services.ModeratorService;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/moderator")
+@RequestMapping("${api.v1.prefix}")
 public class ModeratorController {
     private final ModeratorService moderatorService;
 
-    @GetMapping()
+    @GetMapping("/moderator")
     public String moderatorPage() {
         moderatorService.doModeratorStuff();
         return "moderator";

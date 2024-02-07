@@ -1,7 +1,9 @@
-package ru.itrum.springSecurity.task01.config;
+package ru.itrum.springSecurity.task01.security.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -19,26 +21,27 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final PersonDetailsService personDetailsService;
     private final JwtAuthenticationFilter jwtFilter;
     private final JwtAuthenticationProvider jwtAuthenticationProvider;
+    private final Environment env;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        String apiPrefix = env.getProperty("api.v1.prefix");
+
         http.csrf().disable()
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .authenticationProvider(jwtAuthenticationProvider)
                 .authorizeRequests()
-                .antMatchers("/admin/**").hasRole("SUPER_ADMIN")
-                .antMatchers("/moderator/**").hasAnyRole("SUPER_ADMIN", "MODERATOR")
-                .antMatchers("/public/**").permitAll()
+                .antMatchers("/" + apiPrefix + "/admin/**").hasRole("SUPER_ADMIN")
+                .antMatchers("/" + apiPrefix + "/moderator/**").hasAnyRole("SUPER_ADMIN", "MODERATOR")
+                .antMatchers("/" + apiPrefix + "/public/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .formLogin().loginPage("/login").permitAll()
+                .formLogin().loginPage("/" + apiPrefix + "/login").permitAll()
                 .and()
-                .logout().logoutUrl("/logout")
+                .logout().logoutUrl("/" + apiPrefix + "/logout")
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
-
     }
 
     @Override

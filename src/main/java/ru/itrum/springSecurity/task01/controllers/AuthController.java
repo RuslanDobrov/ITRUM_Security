@@ -23,7 +23,7 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/public")
+@RequestMapping("${api.v1.prefix}")
 public class AuthController {
 
     private final PersonValidator personValidator;
@@ -33,7 +33,7 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
-    @PostMapping("/registration")
+    @PostMapping("/public/registration")
     public Map<String, String> performRegistration(@RequestBody @Valid PersonDTO personDTO, BindingResult bindingResult) {
         Person person = convertToPerson(personDTO);
         personValidator.validate(person, bindingResult);
@@ -46,7 +46,7 @@ public class AuthController {
         return Map.of("jwt-token", token);
     }
 
-    @GetMapping("/showUserInfo")
+    @GetMapping("/public/showUserInfo")
     @ResponseBody
     public String showUserInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -59,7 +59,7 @@ public class AuthController {
         return this.modelMapper.map(personDTO, Person.class);
     }
 
-    @PostMapping("/login")
+    @PostMapping("/public/login")
     public Map<String, String> performLogin(@RequestBody AuthenticationDTO authenticationDTO) {
         UsernamePasswordAuthenticationToken authInputToken =
                 new UsernamePasswordAuthenticationToken(authenticationDTO.getUsername(),

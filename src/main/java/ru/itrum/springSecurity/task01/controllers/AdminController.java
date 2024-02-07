@@ -8,11 +8,11 @@ import ru.itrum.springSecurity.task01.services.AdminService;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("${api.v1.prefix}")
 public class AdminController {
     private final AdminService adminService;
 
-    @GetMapping()
+    @GetMapping("/admin")
     public String adminPage() {
         adminService.doAdminStuff();
         return "admin";

@@ -1,4 +1,4 @@
-package ru.itrum.springSecurity.task01.config;
+package ru.itrum.springSecurity.task01.security.config;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
